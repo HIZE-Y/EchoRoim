@@ -1,10 +1,12 @@
 # List of examples (without .c extension)
-EXAMPLES =  imu motor_sw_pwm rgb_led ultrasonic button_rgb
+EXAMPLES =  imu motor_sw_pwm rgb_led ultrasonic button_rgb main
  
 # QNX target configuration
-QNX_TARGET_IP=192.168.176.96
-QNX_TARGET_USER=qnxuser
-QNX_TARGET_DIR=/data/home/qnxuser
+QNX_TARGET_USER ?= qnxuser
+QNX_TARGET_PASS ?= qnxuser
+QNX_ROOT_PASS ?= root
+QNX_TARGET_IP ?= 192.168.25.96
+QNX_TARGET_DIR ?= /data/home/$(QNX_TARGET_USER)
  
 # Default target - builds in Docker container and deploys all examples
 default:
@@ -16,17 +18,17 @@ deploy-all:
 	@echo "Deploying all examples to QNX target..."
 	@for example in $(EXAMPLES); do \
 		echo "Deploying $$example..."; \
-		scp -o StrictHostKeyChecking=no build/$(CONFIG_NAME)/$$example $(QNX_TARGET_USER)@$(QNX_TARGET_IP):$(QNX_TARGET_DIR)/; \
+		SSHPASS=$(QNX_TARGET_PASS) sshpass -e scp -o StrictHostKeyChecking=no build/$(CONFIG_NAME)/$$example $(QNX_TARGET_USER)@$(QNX_TARGET_IP):$(QNX_TARGET_DIR)/; \
 	done
 	@echo "All examples deployed successfully."
  
 # Deploy a specific example to the QNX target
 deploy-%:
-	scp -o StrictHostKeyChecking=no build/$(CONFIG_NAME)/$* $(QNX_TARGET_USER)@$(QNX_TARGET_IP):$(QNX_TARGET_DIR)/
+	SSHPASS=$(QNX_TARGET_PASS) sshpass -e scp -o StrictHostKeyChecking=no build/$(CONFIG_NAME)/$* $(QNX_TARGET_USER)@$(QNX_TARGET_IP):$(QNX_TARGET_DIR)/
  
 # Run a specific example on the QNX target
 run-%:
-	ssh -o StrictHostKeyChecking=no $(QNX_TARGET_USER)@$(QNX_TARGET_IP) "cd $(QNX_TARGET_DIR) && ./$*"
+	SSHPASS=$(QNX_TARGET_PASS) sshpass -e ssh -o StrictHostKeyChecking=no $(QNX_TARGET_USER)@$(QNX_TARGET_IP) "su -c 'cd $(QNX_TARGET_DIR) && ./$*' root"
  
 # Deploy and run a specific example
 deploy-run-%: deploy-%

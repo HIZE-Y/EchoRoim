@@ -1,5 +1,5 @@
 # List of examples (without .c extension)
-EXAMPLES =  imu motor_sw_pwm rgb_led ultrasonic button_rgb
+EXAMPLES =  imu motor_sw_pwm rgb_led ultrasonic button_rgb main
 
 # Build architecture/variant string
 PLATFORM = aarch64le

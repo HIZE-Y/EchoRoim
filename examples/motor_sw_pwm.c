@@ -36,6 +36,8 @@ int main(void) {
         return EXIT_FAILURE;
     }
     
+    sleep(10);
+
     // Drive forward.
     printf("Driving forward...\n");
     motor_right_forward();
