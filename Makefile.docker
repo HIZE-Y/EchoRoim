@@ -1,0 +1,45 @@
+# List of examples (without .c extension)
+EXAMPLES =  imu motor_sw_pwm rgb_led ultrasonic button_rgb
+
+# Build architecture/variant string
+PLATFORM = aarch64le
+
+# Build profile
+BUILD_PROFILE = debug
+
+# Output directory
+CONFIG_NAME = $(PLATFORM)-$(BUILD_PROFILE)
+OUTPUT_DIR = build/$(CONFIG_NAME)
+
+# Compiler and linker definitions
+CC = qcc -Vgcc_nto$(PLATFORM)
+LD = $(CC)
+
+# Include paths
+INCLUDES = -Icommon/rpi_i2c/public/ -Icommon/rpi_gpio/public/ -Icommon/system/gpio/ -Icommon/rpi_trilobot
+
+# Build flags
+CCFLAGS = -Wall -g -O0 -fno-builtin $(INCLUDES)
+
+# Build all targets
+all: $(EXAMPLES)
+
+# Rule for building each example
+$(EXAMPLES): %: examples/%.c common/rpi_trilobot/trilobot.c librpi_i2c.a librpi_gpio.a
+	@mkdir -p $(OUTPUT_DIR)
+	$(CC) -o $(OUTPUT_DIR)/$@ $< common/rpi_trilobot/trilobot.c $(CCFLAGS) \
+		-Lcommon/rpi_i2c/build/$(CONFIG_NAME) -lrpi_i2c \
+		-Lcommon/rpi_gpio/build/$(CONFIG_NAME) -lrpi_gpio \
+		-lm
+
+# Build static libraries
+librpi_i2c.a:
+	$(MAKE) -C common/rpi_i2c
+
+librpi_gpio.a:
+	$(MAKE) -C common/rpi_gpio
+
+clean:
+	rm -rf build
+	$(MAKE) -C common/rpi_i2c clean
+	$(MAKE) -C common/rpi_gpio clean 
