@@ -1,11 +1,11 @@
 # List of examples (without .c extension)
-EXAMPLES =  imu motor_sw_pwm rgb_led ultrasonic button_rgb main
+EXAMPLES =  imu motor_sw_pwm rgb_led ultrasonic button_rgb main demo
  
 # QNX target configuration
 QNX_TARGET_USER ?= qnxuser
 QNX_TARGET_PASS ?= qnxuser
 QNX_ROOT_PASS ?= root
-QNX_TARGET_IP ?= 192.168.25.96
+QNX_TARGET_IP ?= 172.20.10.8
 QNX_TARGET_DIR ?= /data/home/$(QNX_TARGET_USER)
  
 # Default target - builds in Docker container and deploys all examples
